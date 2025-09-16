@@ -20,7 +20,10 @@ module zm_convr
 !---------------------------------------------------------------------------------
 
 
-  use ccpp_kinds, only:  kind_phys
+! use ccpp_kinds, only:  kind_phys
+  ! +++ lama 250904 +++
+  use shr_kind_mod, only: r8=>shr_kind_r8
+  ! --- lama 250904 ---
 
   implicit none
 
@@ -31,6 +34,10 @@ module zm_convr
 !
   public zm_convr_init                 ! ZM schemea
   public zm_convr_run                  ! ZM schemea
+
+  ! +++ lama 250904 +++
+   integer, parameter :: kind_phys = r8 
+  ! --- lama 250904 ---
 
    real(kind_phys) rl         ! wg latent heat of vaporization.
    real(kind_phys) cpres      ! specific heat at constant pressure in j/kg-degk.
@@ -174,7 +181,8 @@ subroutine zm_convr_run(     ncol    ,pver    , &
                     org     ,orgt    ,org2d   ,  &
                     dif     ,dnlf    ,dnif    , &
 ! +++ Yi-Chi
-                    rice   ,omega, errmsg  ,errflg)
+                    rice   ,errmsg  ,errflg, omega)
+!                   rice   ,omega, errmsg  ,errflg)
 
                     !                    rice   ,errmsg  ,errflg)
 ! --- Yi-Chi
@@ -294,9 +302,6 @@ subroutine zm_convr_run(     ncol    ,pver    , &
    integer, intent(in) :: ncol                    ! number of atmospheric columns
    integer, intent(in) :: pver, pverp
 
-   ! +++ Yi-Chi
-   real(kind_phys), intent(in) :: omega(:,:)          ! vertical velocity
-   ! --- Yi-Chi
 
    real(kind_phys), intent(in) :: gravit          ! gravitational acceleration (m s-2)
    real(kind_phys), intent(in) :: latice          ! Latent heat of fusion (J kg-1)
@@ -345,6 +350,9 @@ subroutine zm_convr_run(     ncol    ,pver    , &
 
    integer,  intent(out) :: ideep(:)  ! column indices of gathered points                              (ncol)
 
+   ! +++ Yi-Chi
+   real(kind_phys), intent(in), optional :: omega(ncol,pver)          ! vertical velocity
+   ! --- Yi-Chi
    character(len=512), intent(out)      :: errmsg
    integer, intent(out)                 :: errflg
 
